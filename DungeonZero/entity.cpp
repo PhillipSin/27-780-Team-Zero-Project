@@ -103,7 +103,7 @@ bool Entity::reachedGoal(Maze& aMaze)
 }
 
 
-void Entity::changeDirection(bool dir)
+void Entity::changeDirection(bool dir) //maybe double check these directions
 {
 	//bool = 1 for left 
 	if (dir) {
@@ -121,26 +121,44 @@ void Entity::changeDirection(bool dir)
 	}
 }
 
-void Entity::attack(int x, int y, Maze& aMaze) {
+bool Entity::attack(int x, int y, Maze& aMaze) {
 	//if spot ahead has enemy
+	int dir = this->direction; //0 for right, go counterclockwise
+	if (dir == 0 && x < aMaze.getCol() - 1) {
+		x += 1;
+	}
+	else if (dir == 1 && y > 0) {
+		y -= 1;
+	}
+	else if (dir == 2 && x > 0) {
+		x -= 1;
+	}
+	else if (dir == 3 && y < aMaze.getRow() -1 ) {
+		y += 1;
+	}
+
 	if (aMaze.getMap(x,y) == "e") {
 		//potentially make enemy at that location flash to show attack
 		//enemy at that location loses x hp
+		return true;
 	}
 
 	else {
 		cout << "How anticlimactic. You lash out in front of you but there's nothing there..." << endl;
+		return false;
 	}
 }
 
-void Entity::drink() {
+bool Entity::drink() {
 	if (holdingPotion) {
 		health += 10; //how much hp to add?
 		holdingPotion = false;
 		cout << "You chug some drink. You feel 10HP healthier." << endl;
+		return true;
 	}
 	else {
 		cout << "You feel parched but have nothing to sate your thirst." << endl;
+		return false;
 	}
 }
 

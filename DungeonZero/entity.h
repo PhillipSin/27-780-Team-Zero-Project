@@ -30,8 +30,8 @@ public:
 	int getDirection() { return direction; };
 	void changeDirection(bool dir);
 	int getNumPotions() { return holdingPotion; }
-	void attack(int x, int y, Maze& aMaze);
-	void drink();
+	bool attack(int x, int y, Maze& aMaze);
+	bool drink();
 	void pickUp(int x, int y, Maze& aMaze);
 	void loseHp(int x);
 };

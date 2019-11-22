@@ -252,21 +252,12 @@ int main(void)
 
 		if (key == FSKEY_A) //attack
 		{
-			bool enemyInFront = theEntity.checkEnemyInFront(theMap);
-			if (enemyInFront)
-			{
-				theEntity.attack(theEnemies);
-				return false;
-			}
+			return theEntity.attack(theEntity.getX(), theEntity.getY(), theMaze);
 		}
 
 		if (key == FSKEY_S)//consume potion
 		{
-			if (theEntity.getNumPotions() > 0)
-			{
-				theEntity.drink();
-				return false;
-			}
+			return theEntity.drink();
 		}
 
 		if (key == FSKEY_D) //item pickup
