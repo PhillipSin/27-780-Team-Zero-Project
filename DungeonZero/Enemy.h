@@ -5,6 +5,8 @@
 #include <string>
 #include "fssimplewindow.h"
 
+const int MAX_MAP_SIZE = 100;
+
 using namespace std;
 class Maze;
 class Entity;
@@ -13,6 +15,10 @@ class Enemy {
 private:
 	int health;
 	int xPos, yPos;
+	bool calculatedShortest;
+	int parentArray[MAX_MAP_SIZE][MAX_MAP_SIZE];
+	bool shortest[MAX_MAP_SIZE][MAX_MAP_SIZE];
+
 	//array pathToUser;
 
 public:
@@ -23,6 +29,8 @@ public:
 	}
 	void move(int d, Maze& aMaze);
 	void attack(Entity& anEntity);
-	void calcShortestPath(Entity& anEntity);
+	bool moveAllowed(int row, int col, Maze& aMaze);
+	void setShortestPath(int parentArray[MAX_MAP_SIZE][MAX_MAP_SIZE], Maze& aMaze);
+	void findBestPath(Entity& anEntity, Maze& aMaze);
 	//this function needs the x,y position of the player entity and build it onto the pathToUser array
 };
