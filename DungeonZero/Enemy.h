@@ -16,6 +16,7 @@ private:
 	int health;
 	int xPos, yPos;
 	bool calculatedShortest;
+	bool adjacentPlayer;
 	int parentArray[MAX_MAP_SIZE][MAX_MAP_SIZE];
 	bool shortest[MAX_MAP_SIZE][MAX_MAP_SIZE];
 
@@ -27,7 +28,8 @@ public:
 		xPos = xLoc;
 		yPos = yLoc;
 	}
-	void move(int d, Maze& aMaze);
+	void detectAdjacentPlayer();
+	void move();
 	void attack(Entity& anEntity);
 	bool moveAllowed(int row, int col, Maze& aMaze);
 	void setShortestPath(int parentArray[MAX_MAP_SIZE][MAX_MAP_SIZE], Maze& aMaze);

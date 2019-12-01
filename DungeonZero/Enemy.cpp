@@ -21,7 +21,7 @@ const int MAX_HP = 20;
 const int ATTACK_POWER = 5;
 
 //1 forward, 2 left, 3 right, 4 back
-void Enemy::move(int d, Maze& aMaze) {
+/*void Enemy::move(int d, Maze& aMaze) {
 	if (d == 1 && yPos > 0 && aMaze.getMap(xPos,yPos-1)!= "1") {
 		yPos=yPos-1;
 	}
@@ -37,7 +37,47 @@ void Enemy::move(int d, Maze& aMaze) {
 	else {
 		cout << "What are you doing? You can't move there." << endl;
 	}
+}*/
+
+void Enemy::detectAdjacentPlayer()
+{
+	int counter = 0;
+
+	for (int i = 0; i < MAX_MAP_SIZE; i++)
+	{
+		for (int j = 0; j < MAX_MAP_SIZE; j++)
+		{
+			if (shortest[i][j] == true)
+			{
+				counter++;
+			}
+		}
+	}
+
+	if (counter == 1)
+		adjacentPlayer == true;
 }
+
+void Enemy::move()
+{
+	// Check Above
+	if (shortest[yPos+1][xPos] == true) {
+		yPos++;
+	}
+	// Check Right
+	else if (shortest[yPos][xPos+1] == true) {
+		xPos++;
+	}
+	// Check Below
+	else if (shortest[yPos-1][xPos] == true) {
+		yPos--;
+	}
+	// Check Left
+	else if (shortest[yPos][xPos-1] == true) {
+		xPos--;
+	}
+}
+
 
 void Enemy::attack(Entity& anEntity) {
 	//allow it to reference player
@@ -150,4 +190,3 @@ void Enemy::findBestPath(Entity& anEntity, Maze& aMaze)
 	else
 		cout << "No available path to end position." << endl;
 }
-
