@@ -32,7 +32,7 @@ int main(int argc, char const* argv[])
 	s.maze(map);
 	
 	s.placeItems(map);
-	//s.showMaze(map);
+	s.showMaze(map);
 	s.save_map(map);
 	return 0;
 }

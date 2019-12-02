@@ -12,6 +12,7 @@ using std::vector;
 class paths {
 private:
 	int width, height; // the size of the bitmap
+	int free_ct;
 	std::vector<char> enem;
 
 	

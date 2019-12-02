@@ -29,6 +29,7 @@ paths::paths()
 {
 	pixels = new char[width * height];
 	width = height = 0;
+	free_ct = width*height;
 }
 void paths::maze(vector<vector<char>>& map) {
 	//U unvisited, ' ' visited
@@ -37,6 +38,8 @@ void paths::maze(vector<vector<char>>& map) {
 		for (int j = 0; j < map[0].size(); ++j)
 		{
 			map[i][j] = '1';
+
+
 		}
 	}
 	makeMaze(map, 0, 0);
@@ -51,6 +54,7 @@ void paths::showMaze(vector<vector<char>>& map) {
 		cout << endl;
 	}
 }
+
 void paths::init(int h, int w)
 {
 	width = w;
@@ -72,10 +76,7 @@ void paths::init(int h, int w)
 	//cout << "Enemies: " << enem << endl;
 	//vector <char> items(width*height);
 	//items = { string(Enem, 'e'), string(potion,'p'), string(weapon,'w'), string(key,'k' )};
-	const size_t nonPaddedSize = enem.size();
-	const size_t numPaddingElements = (100 - nonPaddedSize % 100) % 100;
-	if (numPaddingElements > 0)
-		enem.resize(nonPaddedSize + numPaddingElements, '0');
+	
 
 	//for (int i = 0; i < 100; ++i)
 	//{
@@ -86,17 +87,39 @@ void paths::init(int h, int w)
 
 void paths::placeItems(vector<vector<char>>& map) {
 	
-	srand(time(NULL));
-	int ct = 0;
+
+	
 	for (int i = 0; i < map.size(); ++i)
 	{
 		for (int j = 0; j < map[0].size(); ++j)
 		{
-			int randInd = rand() % 100;
 			if (map[i][j] == '0')
 			{
-				//cout << "items: " << endl;
+				//free_ct++;
+			}
+		}
+	}
+	cout << "ct: " << free_ct << endl;
+	const size_t nonPaddedSize = enem.size();
+	const size_t numPaddingElements = (free_ct - nonPaddedSize % free_ct) % free_ct;
+	if (numPaddingElements > 0)
+		enem.resize(nonPaddedSize + numPaddingElements, '0');
+
+	srand(time(NULL));
+	int range = free_ct;// + 1;
+	for (int i = 0; i < map.size(); ++i)
+	{
+		for (int j = 0; j < map[0].size(); ++j)
+		{
+			int randInd = rand() % (range);
+			if (map[i][j] == '0' && range > 1)
+			{
+				cout << "ind: " << randInd << endl;
 				map[i][j] = enem[randInd];
+				//char temp 
+				enem.erase(enem.begin() + randInd);
+				range--;
+				//RandomElements(int* v, int n)
 			}
 		}
 	}
@@ -117,6 +140,7 @@ void paths::makeMaze(vector<vector<char>>& map, int i, int j) {
 	//visited, go back the the coming direction, return 
 	if (map[i][j] == '0')
 	{
+		
 		return;
 	}
 	//some neighbors are visited in addition to the coming direction, return
@@ -126,6 +150,7 @@ void paths::makeMaze(vector<vector<char>>& map, int i, int j) {
 		return;
 	}
 	map[i][j] = '0'; // visited
+	free_ct++;
 	//shuffle the visitOrder
 	shuffle(visitOrder, 4);
 	for (int k = 0; k < 4; ++k)
@@ -151,6 +176,7 @@ int paths::countVisitedNeighbor(vector<vector<char>>& map, int i, int j)
 		if (map[ni][nj] == '0')
 		{
 			count++;//visited
+			//free_ct++;
 		}
 	}
 	return count;
