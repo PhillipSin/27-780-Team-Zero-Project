@@ -61,19 +61,19 @@ void Enemy::detectAdjacentPlayer()
 void Enemy::move()
 {
 	// Check Above
-	if (shortest[yPos+1][xPos] == true) {
+	if (shortest[yPos + 1][xPos] == true) {
 		yPos++;
 	}
 	// Check Right
-	else if (shortest[yPos][xPos+1] == true) {
+	else if (shortest[yPos][xPos + 1] == true) {
 		xPos++;
 	}
 	// Check Below
-	else if (shortest[yPos-1][xPos] == true) {
+	else if (shortest[yPos - 1][xPos] == true) {
 		yPos--;
 	}
 	// Check Left
-	else if (shortest[yPos][xPos-1] == true) {
+	else if (shortest[yPos][xPos - 1] == true) {
 		xPos--;
 	}
 }
@@ -81,8 +81,18 @@ void Enemy::move()
 
 void Enemy::attack(Entity& anEntity) {
 	//allow it to reference player
-	anEntity.loseHp(ATTACK_POWER);
-
+	int xPlayer = anEntity.getX();
+	int yPlayer = anEntity.getY();
+	if ((xPos - 1) == xPlayer || (xPos + 1) == xPlayer) {
+		if (yPos == yPlayer) {
+			anEntity.loseHp(ATTACK_POWER);
+		}
+	}
+	if (yPos - 1 == yPlayer || yPos + 1 == yPlayer) {
+		if (xPos == xPlayer) {
+			anEntity.loseHp(ATTACK_POWER);
+		}
+	}
 }
 
 bool Enemy::moveAllowed(int row, int col, Maze& aMaze)
