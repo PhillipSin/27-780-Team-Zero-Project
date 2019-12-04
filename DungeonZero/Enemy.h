@@ -1,13 +1,12 @@
-
 #pragma once
 
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <queue>
+#include "maze.h"
 #include "fssimplewindow.h"
-
-const int MAX_MAP_SIZE = 100;
-
+const int MAX_MAP_SIZE = 15;
 using namespace std;
 class Maze;
 class Entity;
@@ -15,23 +14,34 @@ class Entity;
 class Enemy {
 private:
 	int health;
-	int xPos, yPos;
+	bool living;
+	string steppingOn;
+	//array pathToUser;
 	bool calculatedShortest;
-	bool adjacentPlayer;
 	int parentArray[MAX_MAP_SIZE][MAX_MAP_SIZE];
 	bool shortest[MAX_MAP_SIZE][MAX_MAP_SIZE];
 
-	//array pathToUser;
-
 public:
+	int xPos, yPos;
 	Enemy(int xLoc, int yLoc)
 	{
+		steppingOn = "0";
+		health = 10;
 		xPos = xLoc;
 		yPos = yLoc;
+		living = true;
 	}
-	void detectAdjacentPlayer();
-	void move();
-	void attack(Entity& anEntity);
+	void getShort();
+	void setShortestPath(int parentArray[MAX_MAP_SIZE][MAX_MAP_SIZE], Maze& aMaze, Entity& anEntity);
+	int getX() { return xPos; };
+	int getY() { return yPos; };
+	int getHealth() { return health; };
+	void damage(int damage) { health -= damage; };
+	void move(int x,int y, Maze& aMaze);
+	void drawShortest();
+	bool attack(Entity& anEntity);
+	bool isLiving() { return living; };
+	bool die(Maze& aMaze);
 	bool moveAllowed(int row, int col, Maze& aMaze);
 	void setShortestPath(int parentArray[MAX_MAP_SIZE][MAX_MAP_SIZE], Maze& aMaze);
 	void findBestPath(Entity& anEntity, Maze& aMaze);

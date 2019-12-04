@@ -133,6 +133,8 @@
     <ClCompile Include="maze.cpp" />
     <ClCompile Include="orbit.cpp" />
     <ClCompile Include="OrbitingViewer.cpp" />
+    <ClCompile Include="paths.cpp" />
+    <ClCompile Include="printText.cpp" />
     <ClCompile Include="ysglfontdata.c" />
     <ClCompile Include="yspng.cpp" />
     <ClCompile Include="yssimplesound.cpp" />
@@ -146,6 +148,8 @@
     <ClInclude Include="GraphicFont.h" />
     <ClInclude Include="maze.h" />
     <ClInclude Include="OrbitingViewer.h" />
+    <ClInclude Include="paths.h" />
+    <ClInclude Include="printText.h" />
     <ClInclude Include="ysglfontdata.h" />
     <ClInclude Include="yspng.h" />
     <ClInclude Include="yssimplesound.h" />

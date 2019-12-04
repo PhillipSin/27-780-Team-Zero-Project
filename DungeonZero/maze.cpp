@@ -9,10 +9,12 @@
 #include <vector>
 using namespace std;
 
+
 struct parentChild {
 	vector<int> parent;
 	vector<int> child;
 };
+
 
 void drawTarget(int column, int row, string val)
 {
@@ -32,8 +34,6 @@ void drawTarget(int column, int row, string val)
 	glVertex2i((row - 1) * 20, (column) * 20);
 	glVertex2i((row) * 20, (column) * 20);
 	glVertex2i((row) * 20, (column - 1) * 20);
-
-
 
 	glEnd();
 	//DrawingUtilNG::drawCube((row-1)*20, (column - 1) * 20, 0, (row) * 20, (column) * 20, 20.0, false);
@@ -56,17 +56,65 @@ void startEnd(int column, int row, bool val, bool def)
 		glEnd();
 	}
 }
-void Maze::draw()
+
+
+bool Maze::moveAllowed(int row, int col)
 {
-	for (int i = 1; i <= colSize; ++i)
+	// note order of conditions 
+	// (I don't check map[row][col] until I am sure that row and col are valid)
+	return (row > 0 && row <= rowSize
+		&& col > 0 && col <= colSize
+		&& map[row][col]!="1");
+}
+
+
+void Maze::draw(Entity& theEntity)
+{
+	/*for (int i = 1; i <= 9; ++i)
 	{
-		for (int j = 1; j <= colSize; ++j)
+		for (int j = 1; j <= 9; ++j)
 		{
 			drawTarget(i, j, map[i][j]);
+			
 		}
+	}*/
+	int row = 0;
+	int column = 0;
+	for (int i = theEntity.getX() - 4; i <= theEntity.getX()+4; i++) {
+		row = 0;
+		for (int j = theEntity.getY()-4; j <= theEntity.getY()+4; ++j)
+		{
+			if (i < 1||j<1||i>colSize||j>rowSize) {
+				//drawTarget(i, j, "1");
+				glColor3ub(0, 0, 0);
+			}
+			else {
+				string val = map[i][j];
+				//drawTarget(i, j, map[i][j]);
+				if (val == "1") {
+					glColor3ub(0, 0, 0);
+				}
+				else if (val == "d") {
+					glColor3ub(100, 0, 0);
+				}
+
+				else {
+					glColor3ub(255, 255, 255);
+				}
+
+			}
+			glBegin(GL_QUADS);
+			glVertex2i((row - 1) * 20, (column - 1) * 20);
+			glVertex2i((row - 1) * 20, (column) * 20);
+			glVertex2i((row) * 20, (column) * 20);
+			glVertex2i((row) * 20, (column - 1) * 20);
+			row++;
+			glEnd();
+
+		}
+		column++;
 	}
-	startEnd(startX, startY, 1, startDef);
-	startEnd(endX, endY, 0, endDef);
+
 }
 
 
@@ -119,17 +167,19 @@ bool Maze::load()
 				column++;
 			}
 			k++;
+			//cout << startX << "," << startY << " " << endX << "," << endY << endl;
 
 		}
 		for (int i = 1; i <= colSize; ++i)
 		{
 			for (int j = 1; j <= colSize; ++j)
 			{
-				if (map[i][j] != "1" && map[i][j] != "0" && map[i][j] != "d" && map[i][j] != "e") {
+				if (map[i][j] != "1" && map[i][j] != "0" && map[i][j] != "d" && map[i][j] != "e" && map[i][j] != "p" && map[i][j] != "w" && map[i][j] != "k") {
 					map[i][j] = "1";
 				}
 			}
 		}
+		map[endX][endY] = "0";
 		return 1;
 	}
 	else {
@@ -142,36 +192,22 @@ vector<vector<string>> Maze::view(Entity& anEntity)
 	int x = anEntity.getX();
 	int y = anEntity.getY();
 	vector<vector<string>> v(rowSize+1, vector<string>(colSize+1, "0"));
-	vector<vector<string>>viewer{ {"0","0","0","0","0","0","0","0","0","0"},
-							   {"0","0","0","0","0","0","0","0","0","0"}, 
-	{"0","0","0","0","0","0","0","0","0","0"}, 
-	{"0","0","0","0","0","0","0","0","0","0"}, 
-	{"0","0","0","0","0","0","0","0","0","0"}, 
-	{"0","0","0","0","0","0","0","0","0","0"}, 
-	{"0","0","0","0","0","0","0","0","0","0"}, 
-	{"0","0","0","0","0","0","0","0","0","0"}, 
-	{"0","0","0","0","0","0","0","0","0","0"}, 
-	{"0","0","0","0","0","0","0","0","0","0"}};
 	for (int i = 0; i <= colSize; ++i)
 	{
 		for (int j = 0; j <= rowSize; ++j)
 		{
-				v[i][j] = map[i][j];
-				cout << v[i][j] << " ";
+			v[i][j] = map[i][j];
 		}
-		cout << endl;
-		
 	}
-	cout << endl;
 	return v;
 }
 
 void Maze::print()
 {
 	std::cout << std::endl;
-	for (int i = 1; i <= colSize; ++i)
+	for (int i = 0; i <= colSize; ++i)
 	{
-		for (int j = 1; j <= colSize; ++j)
+		for (int j = 0; j <= colSize; ++j)
 		{
 			std::cout << map[i][j] << ' ';
 		}
@@ -179,173 +215,105 @@ void Maze::print()
 	}
 }
 
+void Maze::edit(int xx, int yy, string val)
+{
+	map[xx][yy] = val;
+}
 
 
-//void Maze::save()
-//{
-//	string fileN;
-//	cout << "Filename: ";
-//	cin >> fileN;
-//	ofstream outfile(fileN);
-//	string line1 = to_string(colSize);
-//	string line2 = to_string(startX) + " " + to_string(startY);
-//	string line3 = to_string(endX) + " " + to_string(endY);
-//	outfile << line1 << endl << line2 << endl << line3;
-//	//cout << line1 << endl << line2 << endl << line3;
-//
-//	outfile << std::endl;
-//	for (int i = 1; i <= colSize; ++i)
-//	{
-//		for (int j = 1; j <= colSize; ++j)
-//		{
-//			outfile << map[i][j] << ' ';
-//		}
-//		outfile << std::endl;
-//	}
-//	outfile.close();
-//}
 
-//void Maze::edit(int locY, int locX)
-//{
-//
-//	int i = locX / 20 + 1;
-//	int j = locY / 20 + 1;
-//
-//	if (map[i][j] == 0) {
-//		map[i][j] = 1;
-//
-//		if (i == startX && j == startY) {
-//			startDef = false;
-//			if (endDef == false) {
-//				endX = i;
-//				endY = j;
-//				endDef = true;
-//			}
-//			else {
-//				map[i][j] = 0;
-//			}
-//		}
-//		else if (i == endX && j == endY) {
-//			endDef = false;
-//			map[i][j] = 0;
-//		}
-//
-//	}
-//	else if (map[i][j] == 1) {
-//		map[i][j] = 0;
-//		if (startDef == false) {
-//			startX = i;
-//			startY = j;
-//			startDef = true;
-//		}
-//		else if (startDef == true && endDef == false) {
-//			endX = i;
-//			endY = j;
-//			endDef = true;
-//		}
-//	}
-//
-//}
-//void drawPath(int column, int row) {
-//
-//	glColor3ub(100, 150, 100);
-//
-//
-//	glBegin(GL_QUADS);
-//	glVertex2i((row - 1) * 20, (column - 1) * 20);
-//	glVertex2i((row - 1) * 20, (column) * 20);
-//	glVertex2i((row) * 20, (column) * 20);
-//	glVertex2i((row) * 20, (column - 1) * 20);
-//	glEnd();
-//}
 
-//void Maze::findShortestPath(Entity& anEntity)
-//{
-//	int rootX, rootY;
-//	int currX, currY;
-//	vector<parentChild> family;
-//	vector<vector<int>> visited;
-//	rootX = anEntity.getX();
-//	rootY = anEntity.getY();
-//	if (rootX == endX && rootY == endY) {
-//		return;
-//	}
-//	queue<vector<int>> list;
-//	list.push({ rootX, rootY });
-//	visited.push_back({ rootX,rootY });
-//	vector<int> child;
-//	parentChild pC;
-//
-//	vector<vector<int>>::iterator it;
-//
-//	while (!list.empty()) {
-//
-//		currX = list.front().at(0);
-//		currY = list.front().at(1);
-//		list.pop();
-//		if (currX == endX && currY == endY) {
-//			parentChild currF;
-//			while ((currX != rootX) || (currY != rootY)) {
-//				vector<int> curr = { currX,currY };
-//				for (int i = 0; i < family.size(); i++) {
-//					currF = family.at(i);
-//					if (currF.child == curr) {
-//						currX = currF.parent.at(0);
-//						currY = currF.parent.at(1);
-//						drawPath(currX, currY);
-//					}
-//				}
-//			}
-//			break;
-//		}
-//		else {
-//			if (currX > 1 && map[currX - 1][currY] == 0) {
-//				child = { currX - 1,currY };
-//				it = find(visited.begin(), visited.end(), child);
-//				if (it == visited.end()) {
-//					pC.child = child;
-//					pC.parent = { currX,currY };
-//					family.push_back(pC);
-//					list.push(child);
-//					visited.push_back(child);
-//				}
-//			}
-//
-//			if (currX < rowSize && map[currX + 1][currY] == 0) {
-//				child = { currX + 1,currY };
-//				it = find(visited.begin(), visited.end(), child);
-//				if (it == visited.end()) {
-//					pC.child = child;
-//					pC.parent = { currX,currY };
-//					family.push_back(pC);
-//					list.push(child);
-//					visited.push_back(child);
-//				}
-//			}
-//
-//			if (currY > 1 && map[currX][currY - 1] == 0) {
-//				child = { currX,currY - 1 };
-//				it = find(visited.begin(), visited.end(), child);
-//				if (it == visited.end()) {
-//					pC.child = child;
-//					pC.parent = { currX,currY };
-//					family.push_back(pC);
-//					list.push(child);
-//					visited.push_back(child);
-//				}
-//			}
-//
-//			if (currY < colSize && map[currX][currY + 1] == 0) {
-//				child = { currX ,currY + 1 };
-//				it = find(visited.begin(), visited.end(), child);
-//				if (it == visited.end()) {
-//					pC.child = child;
-//					pC.parent = { currX,currY };
-//					family.push_back(pC);
-//					list.push(child);
-//					visited.push_back(child);
-//				}
-//			}
-//		}
-//	}
-//}
+void Maze::findShortestPath(Enemy& anEnemy,Entity& anEntity)
+{
+	int rootX, rootY;
+	int currX, currY;
+	
+	vector<parentChild> family;
+	vector<vector<int>> visited;
+	rootX = anEnemy.getX();
+	rootY = anEnemy.getY();
+	int entityX = anEntity.getX();
+	int entityY = anEntity.getY();
+	//cout << entityX << " adf " << entityY << endl;
+	if (rootX == entityX && rootY == entityY) {
+		return;
+	}
+	queue<vector<int>> list;
+	list.push({ rootX, rootY });
+	visited.push_back({ rootX,rootY });
+	vector<int> child;
+	parentChild pC;
+
+	vector<vector<int>>::iterator it;
+	while (!list.empty()) {
+
+		currX = list.front().at(0);
+		currY = list.front().at(1);
+		list.pop();
+		if (currX == entityX && currY == entityY) {
+			parentChild currF;
+			while ((currX != rootX) || (currY != rootY)) {
+				vector<int> curr = { currX,currY };
+				for (int i = 0; i < family.size(); i++) {
+					currF = family.at(i);
+					if (currF.child == curr) {
+						currX = currF.parent.at(0);
+						currY = currF.parent.at(1);
+						//cout << currX << " " << currY << endl;
+						if (currX-1 == rootX || currX + 1 == rootX|| currY - 1 == rootY|| currY + 1 == rootY)
+							anEnemy.move(currX,currY,*this);
+					}
+				}
+			}
+			break;
+		}
+		else {
+			if (currX > 1 && (map[currX - 1][currY] != "1" && map[currX - 1][currY] != "e")) {
+				child = { currX - 1,currY };
+				it = find(visited.begin(), visited.end(), child);
+				if (it == visited.end()) {
+					pC.child = child;
+					pC.parent = { currX,currY };
+					family.push_back(pC);
+					list.push(child);
+					visited.push_back(child);
+				}
+			}
+			if (currX < rowSize && (map[currX + 1][currY] != "1" && map[currX + 1][currY] != "e")) {
+				child = { currX + 1,currY };
+				it = find(visited.begin(), visited.end(), child);
+				if (it == visited.end()) {
+					pC.child = child;
+					pC.parent = { currX,currY };
+					family.push_back(pC);
+					list.push(child);
+					visited.push_back(child);
+				}
+			}
+
+			if (currY > 1 && (map[currX][currY - 1] != "1" && map[currX][currY-1] != "e")) {
+				child = { currX,currY - 1 };
+				it = find(visited.begin(), visited.end(), child);
+				if (it == visited.end()) {
+					pC.child = child;
+					pC.parent = { currX,currY };
+					family.push_back(pC);
+					list.push(child);
+					visited.push_back(child);
+				}
+			}
+
+			if (currY < colSize &&( map[currX][currY + 1] != "1" && map[currX][currY+1] != "e")) {
+				child = { currX ,currY + 1 };
+				it = find(visited.begin(), visited.end(), child);
+				if (it == visited.end()) {
+					pC.child = child;
+					pC.parent = { currX,currY };
+					family.push_back(pC);
+					list.push(child);
+					visited.push_back(child);
+				}
+			}
+		}
+	}
+}

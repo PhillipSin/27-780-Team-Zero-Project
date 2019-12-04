@@ -29,7 +29,7 @@ paths::paths()
 {
 	pixels = new char[width * height];
 	width = height = 0;
-	free_ct = width*height;
+	free_ct = width * height;
 }
 void paths::maze(vector<vector<char>>& map) {
 	//U unvisited, ' ' visited
@@ -49,9 +49,9 @@ void paths::showMaze(vector<vector<char>>& map) {
 	{
 		for (int j = 0; j < map[0].size(); ++j)
 		{
-			cout << map[i][j];
+			//cout << map[i][j];
 		}
-		cout << endl;
+		//cout << endl;
 	}
 }
 
@@ -76,7 +76,7 @@ void paths::init(int h, int w)
 	//cout << "Enemies: " << enem << endl;
 	//vector <char> items(width*height);
 	//items = { string(Enem, 'e'), string(potion,'p'), string(weapon,'w'), string(key,'k' )};
-	
+
 
 	//for (int i = 0; i < 100; ++i)
 	//{
@@ -86,9 +86,9 @@ void paths::init(int h, int w)
 }
 
 void paths::placeItems(vector<vector<char>>& map) {
-	
 
-	
+
+
 	for (int i = 0; i < map.size(); ++i)
 	{
 		for (int j = 0; j < map[0].size(); ++j)
@@ -114,7 +114,7 @@ void paths::placeItems(vector<vector<char>>& map) {
 			int randInd = rand() % (range);
 			if (map[i][j] == '0' && range > 1)
 			{
-				cout << "ind: " << randInd << endl;
+				//cout << "ind: " << randInd << endl;
 				map[i][j] = enem[randInd];
 				//char temp 
 				enem.erase(enem.begin() + randInd);
@@ -140,7 +140,7 @@ void paths::makeMaze(vector<vector<char>>& map, int i, int j) {
 	//visited, go back the the coming direction, return 
 	if (map[i][j] == '0')
 	{
-		
+
 		return;
 	}
 	//some neighbors are visited in addition to the coming direction, return
@@ -193,22 +193,43 @@ void paths::swap(int& a, int& b) {
 	b = c;
 }
 
-bool paths::save_map(vector<vector<char>>& map)
+
+bool paths::save_map(vector<vector<char>>& map, string name)
 {
 	ofstream outFile; // output file stream
 
-	outFile.open(fileToSave);
+	outFile.open(name);
 
 	if (outFile.is_open()) { // may not have found file
-		outFile << width << " " << height << endl;
-		outFile << 1 << " " << 1 << endl;
-		outFile << width << " " << height << endl;
+		outFile << width+2 << endl;
+		outFile << 2 << " " << 2 << endl;
+		outFile << width+1 << " " << height+1 << endl;
 
 
-
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++)
-				outFile << map[i][j];
+		
+		for (int i = -1; i < height+1; i++) {
+			for (int j = -1; j < width+1; j++)
+			{
+				if (i == -1) {
+					outFile << "1" << " ";
+				}
+				else if (i == height) {
+					outFile << "1" << " ";
+				}
+				else {
+					if (j == -1) {
+						outFile << "1" << " ";
+					}
+					else if (j == width) {
+						outFile << "1" << " ";
+					}
+					else
+					{
+						outFile << map[i][j] << " ";
+					}
+				}
+				//cout << map[i][j]<<" ";
+			}
 			outFile << endl;
 		}
 		outFile.close();
@@ -219,5 +240,3 @@ bool paths::save_map(vector<vector<char>>& map)
 		return false;
 	}
 }
-
-
